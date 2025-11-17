@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane fx:id="painel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.ufrn.imd.control.Controlador">
+   <bottom>
+      <SplitPane dividerPositions="0.29797979797979796" prefHeight="58.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <Label layoutX="9.0" layoutY="7.0" text="Status:" />
+                  <Label fx:id="statusLabel" alignment="TOP_LEFT" layoutX="53.0" layoutY="8.0" prefHeight="42.0" prefWidth="231.0" text="Aguardando..." />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <ButtonBar layoutX="12.0" layoutY="8.0" prefHeight="40.0" prefWidth="678.0">
+                    <buttons>
+                      <Button fx:id="buttonJogar" mnemonicParsing="false" onAction="#comecarJogo" text="Jogar" />
+                        <Button fx:id="buttonIniciar" mnemonicParsing="false" onAction="#posicionarAleatorio" text="Iniciar" />
+                        <Button fx:id="buttonAtirar" mnemonicParsing="false" text="Atirar" />
+                    </buttons>
+                  </ButtonBar>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#fechar" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help" >
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" onAction="#mostrarAjuda" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <SplitPane dividerPositions="0.040776699029126215" orientation="VERTICAL" prefHeight="517.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="103.0" prefWidth="376.0">
+               <children>
+                  <Label alignment="CENTER" layoutX="-1.0" layoutY="1.0" prefHeight="17.0" prefWidth="500.0" text="Tabuleiro do Jogador" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="491.0" prefWidth="370.0">
+               <children>
+                  <Pane fx:id="paneTabuleiroJogador" layoutY="-2.0" prefHeight="491.0" prefWidth="500.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </left>
+   <right>
+      <SplitPane dividerPositions="0.040776699029126215" orientation="VERTICAL" prefHeight="517.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="13.0" prefWidth="149.0">
+               <children>
+                  <Label alignment="CENTER" layoutX="2.0" layoutY="1.0" prefHeight="17.0" prefWidth="500.0" text="Tabuleiro do PC" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="496.0" prefWidth="164.0">
+               <children>
+                  <Pane fx:id="paneTabuleiroPC" prefHeight="491.0" prefWidth="500.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </right>
+</BorderPane>
