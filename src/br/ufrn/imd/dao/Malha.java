@@ -2,7 +2,7 @@ package br.ufrn.imd.dao;
 
 import java.util.ArrayList;
 import java.util.Random;
-import br.ufrn.imd.control.Controlador;
+
 import br.ufrn.imd.model.Corveta;
 import br.ufrn.imd.model.Destroyer;
 import br.ufrn.imd.model.Fragata;
@@ -11,249 +11,291 @@ import br.ufrn.imd.model.Submarino;
 
 /**
  * Classe abstrata que representa o tabuleiro de jogo para a batalha naval.
- * Gerencia a colocacao e o estado dos navios no tabuleiro.
- * <p>
- * Esta classe e estendida por {@link MalhaJogador} e {@link MalhaPC} para
- * representar o tabuleiro do jogador e o tabuleiro do computador,
- * respectivamente.
- * <p>
- * Cada instancia de {@code Malha} contem uma matriz bidimensional representando
- * o tabuleiro, uma lista de objetos {@link Navio} representando os navios, e
- * arrays para rastrear os navios restantes e quem tem a vez.
- * <p>
- * Metodos permitem posicionamento de navios, verificacao de espacos disponiveis
- * e disparos de tiros.
- * 
  */
 public abstract class Malha {
+
+	//@ spec_public
 	protected int[][] barcos;
+
+	//@ spec_public
 	protected ArrayList<Navio> navios;
-	/**
-	 * Array que rastreia quantos navios restantes existem no tabuleiro.
-	 */
+
+	//@ spec_public
 	protected int[] naviosRestantes;
+
+	//@ spec_public
 	protected boolean vez;
 
-	/**
-	 * Referencia ao objeto {@link Controlador} responsavel pela logica do jogo.
-	 */
-	protected Controlador control;
+	//@ spec_public nullable
+	protected MalhaListener listener;
 
-	/**
-	 * Retorna o objeto {@link Controlador} associado a este tabuleiro.
-	 * 
-	 * @return O objeto {@link Controlador}.
-	 */
-	public Controlador getControl() {
-		return control;
-	}
+	
 
-	/**
-	 * Define o objeto {@link Controlador} associado a este tabuleiro.
-	 * 
-	 * @param control O novo objeto {@link Controlador}.
-	 */
-	public void setControl(Controlador control) {
-		this.control = control;
-	}
+	//@ public invariant barcos != null;
+	//@ public invariant barcos.length == 10;
+	//@ public invariant (\forall int i; 0 <= i && i < barcos.length; barcos[i] != null && barcos[i].length == 10);
+	//@ public invariant navios != null;
+	//@ public invariant naviosRestantes != null;
+	//@ public invariant naviosRestantes.length == 4;
 
-	/**
-	 * Retorna a matriz bidimensional que representa o tabuleiro de jogo.
-	 * 
-	 * @return A matriz bidimensional {@code barcos}.
-	 */
-	public int[][] getBarcos() {
-		return barcos;
-	}
-
-	/**
-	 * Define a matriz bidimensional que representa o tabuleiro de jogo.
-	 * 
-	 * @param barcos A nova matriz bidimensional para o tabuleiro de jogo.
-	 */
-	public void setBarcos(int[][] barcos) {
-		this.barcos = barcos;
-	}
-
-	/**
-	 * Retorna o array que rastreia quantos navios restantes existem no tabuleiro.
-	 * 
-	 * @return O array {@code naviosRestantes}.
-	 */
-	public int[] getNaviosRestantes() {
-		return naviosRestantes;
-	}
-
-	public boolean isVez() {
-		return vez;
-	}
-
-	public void setVez(boolean vez) {
-		this.vez = vez;
-	}
-
-	/**
-	 * Define o array que rastreia quantos navios restantes existem no tabuleiro.
-	 * 
-	 * @param naviosRestantes O novo array para rastrear os navios restantes.
-	 */
-	public void setNaviosRestantes(int[] naviosRestantes) {
-		this.naviosRestantes = naviosRestantes;
-	}
-
-	/**
-	 * Define a lista de objetos {@link Navio} que representam os navios
-	 * posicionados no tabuleiro.
-	 * 
-	 * @param navios A nova lista de objetos {@link Navio}.
-	 */
-	public void setNavios(ArrayList<Navio> navios) {
-		this.navios = navios;
-	}
-
-	/**
-	 * Construtor da classe Malha. Inicializa os atributos barcos, navios, navios
-	 * restantes e vez.
-	 */
+	//@ public normal_behavior
+	//@ ensures barcos != null && barcos.length == 10;
+	//@ ensures (\forall int i; 0 <= i && i < 10; barcos[i] != null);
+	//@ ensures navios != null && navios.isEmpty();
+	//@ ensures naviosRestantes != null && naviosRestantes.length == 4;
+	//@ ensures vez == false;
+	//@ ensures listener == null;
+	//@ pure
 	public Malha() {
 		this.barcos = new int[10][10];
 		this.navios = new ArrayList<Navio>();
 		this.naviosRestantes = new int[4];
 		this.vez = false;
+		this.listener = null;
+	}
+	
+	//@ public normal_behavior
+	//@ requires l != null;
+	//@ assignable this.listener;
+	//@ ensures this.listener == l;
+	//@ also
+	//@ public normal_behavior
+	//@ requires l == null;
+	//@ assignable this.listener;
+	//@ ensures this.listener == null;
+	public void setListener(/* @ nullable @ */ MalhaListener l) {
+		this.listener = l;
 	}
 
-	public ArrayList<Navio> getNavios() {
+
+	//@ public normal_behavior
+	//@ ensures \result == vez;
+	public /* @ pure helper @ */ boolean isVez() {
+		return vez;
+	}
+
+
+	//@ public normal_behavior
+	//@ assignable this.vez;
+	//@ ensures this.vez == vez;
+	public void setVez(boolean vez) {
+		this.vez = vez;
+	}
+
+
+	//@ public normal_behavior
+	//@ ensures \result == barcos;	
+	public /* @ pure helper @ */ int[][] getBarcos() {
+		return barcos;
+	}
+
+	
+	//@ public normal_behavior
+	//@ requires barcos != null;
+	//@ requires barcos.length == 10;
+	//@ requires (\forall int i; 0 <= i && i < 10; barcos[i] != null && barcos[i].length == 10);
+	//@ assignable this.barcos;
+	//@ ensures this.barcos == barcos;
+	public void setBarcos(int[][] barcos) {
+		this.barcos = barcos;
+	}
+
+	//@ public normal_behavior
+	//@ ensures \result == naviosRestantes;
+	public /* @ pure helper @ */ int[] getNaviosRestantes() {
+		return naviosRestantes;
+	}
+
+	//@ public normal_behavior
+	//@ requires naviosRestantes != null;
+	//@ requires naviosRestantes.length == 4;
+	//@ assignable this.naviosRestantes;
+	//@ ensures this.naviosRestantes == naviosRestantes;
+	public void setNaviosRestantes(int[] naviosRestantes) {
+		this.naviosRestantes = naviosRestantes;
+	}
+
+	
+	//@ public normal_behavior
+	//@ requires navios != null;
+	//@ assignable this.navios;
+	//@ ensures this.navios == navios;
+	public void setNavios(ArrayList<Navio> navios) {
+		this.navios = navios;
+	}
+
+
+	//@ public normal_behavior
+	//@ ensures \result == navios;
+	public /* @ pure helper @ */ ArrayList<Navio> getNavios() {
 		return navios;
 	}
 
-	/**
-	 * Imprime o estado atual do tabuleiro de jogo.
-	 */
-	public void imprimirBarcos() {
-		for (int b = 0; b < 10; b++) {
-			for (int a = 0; a < 10; a++) {
-				System.out.print(barcos[b][a] + " ");
-			}
-			System.out.println("");
-		}
-		System.out.println("");
-	}
 
-	/**
-	 * Posiciona um navio no tabuleiro de acordo com o tamanho especificado e
-	 * retorna as posicoes ocupadas pelo navio.
-	 * 
-	 * @param tamanho O tamanho do navio a ser posicionado.
-	 * @return Uma lista de strings representando as posicoes ocupadas pelo navio.
-	 */
+	// IGNORE ESSA LINHA - ENCONTRADO ERRO NO OPENJML PARA MATRIZ assignable barcos[*][*], navios.*, naviosRestantes[*];
+	
+	//@ public normal_behavior
+	//@ requires 2 <= tamanho && tamanho <= 5;
+	//@ assignable \everything;
+	//@ ensures \result != null;
+	//@ ensures \result.size() == tamanho;
+	//@ ensures navios.size() == \old(navios.size()) + 1;
 	public ArrayList<String> posicionarNavio(int tamanho) {
 		Random random = new Random();
-		int direcao = gerarDirecao(); // 0 para horizontal, 1 para vertical
+		int direcao = gerarDirecao();
 
-		int posX, posY;
-		do {
-			posX = random.nextInt(10);
-			posY = random.nextInt(10);
-		} while (!verificarEspacoDisponivel(posX, posY, tamanho, direcao));
+		int posX = gerarCoordenada();
+        int posY = gerarCoordenada();
 
+        //@ loop_invariant 0 <= posX && posX < 10;
+        //@ loop_invariant 0 <= posY && posY < 10;
+        //@ loop_writes posX, posY;
+        while (!verificarEspacoDisponivel(posX, posY, tamanho, direcao)) {
+            posX = gerarCoordenada();
+            posY = gerarCoordenada();
+        }
+
+
+		//@ assume (direcao == 0) ==> (0 <= posY + tamanho < 10);
+        //@ assume (direcao == 1) ==> (0 <= posX + tamanho < 10);
+		
 		ArrayList<String> posicoes = new ArrayList<String>();
+
+	
+		//@ loop_invariant 0 <= i && i <= tamanho;		
+		//@ loop_invariant posicoes.size() == i;		
+		//@ loop_invariant direcao == 0 || direcao == 1;		 
+		//@ loop_invariant (direcao == 0 ==> posY + i <= 10);		 
+		//@ loop_invariant (direcao == 1 ==> posX + i <= 10);		
+		//@ decreases tamanho - i;
 		for (int i = 0; i < tamanho; i++) {
 			if (direcao == 0) {
-				this.barcos[posX][posY + i] = 1; // 1 representa a presenca de um navio
+				// Horizontal: varia Y
+				barcos[posX][posY + i] = 1;
 				posicoes.add(posX + "," + (posY + i));
 			} else {
-				this.barcos[posX + i][posY] = 1; // 1 representa a presenca de um navio
+				// Vertical: varia X
+				barcos[posX + i][posY] = 1;
 				posicoes.add((posX + i) + "," + posY);
 			}
 		}
+
 		adicionarNavio(tamanho, posicoes, direcao);
+
 		return posicoes;
 	}
 
-	/**
-	 * Adiciona um navio ao tabuleiro de jogo com base no tamanho e nas posicoes
-	 * fornecidas.
-	 * 
-	 * @param tamanho  O tamanho do navio a ser adicionado.
-	 * @param posicoes As posicoes ocupadas pelo navio.
-	 * @param direcao  A direcao em que o navio deve ser colocado (horizontal ou
-	 *                 vertical).
-	 */
+	
+  //@ private normal_behavior
+  //@ assignable \nothing;
+  //@ ensures 0 <= \result && \result < 10;
+  //@ spec_public
+  protected /*@ pure helper @*/ int gerarCoordenada() {
+      Random random = new Random();
+      int valor = random.nextInt(10);
+      //@ assume 0 <= valor && valor < 10;
+      return valor;
+  }
+	
+	//@ public behavior
+	//@ requires posicoes != null;
+	//@ requires tamanho == posicoes.size();
+	//@ requires direcao == 0 || direcao == 1;
+	//@ requires 2 <= tamanho && tamanho <= 5;
+	//@ assignable navios, navios.*, naviosRestantes[*];
+	//@ ensures navios.size() == \old(navios.size()) + 1;
 	public void adicionarNavio(int tamanho, ArrayList<String> posicoes, int direcao) {
+		Navio novo = criarNavio(tamanho, posicoes, direcao);
+		navios.add(novo);
+
 		switch (tamanho) {
 		case 2:
-			navios.add(new Corveta(posicoes, direcao));
 			naviosRestantes[0] = 1;
 			break;
 		case 3:
-			navios.add(new Submarino(posicoes, direcao));
 			naviosRestantes[1] = 1;
 			break;
 		case 4:
-			navios.add(new Fragata(posicoes, direcao));
 			naviosRestantes[2] = 1;
 			break;
 		case 5:
-			navios.add(new Destroyer(posicoes, direcao));
 			naviosRestantes[3] = 1;
 			break;
-
+		default:
+			throw new IllegalArgumentException();
 		}
-
 	}
 
-	/**
-	 * Verifica se ha espaco suficiente no tabuleiro para posicionar um navio de
-	 * determinado tamanho e direcao.
-	 * 
-	 * @param posX    A coordenada X inicial onde o navio sera posicionado.
-	 * @param posY    A coordenada Y inicial onde o navio sera posicionado.
-	 * @param tamanho O tamanho do navio a ser posicionado.
-	 * @param direcao A direcao em que o navio deve ser colocado (horizontal ou
-	 *                vertical).
-	 * @return {@code true} se houver espaco suficiente, {@code false} caso
-	 *         contrario.
-	 */
-	public boolean verificarEspacoDisponivel(int posX, int posY, int tamanho, int direcao) {
+	//@ requires posicoes != null;
+	//@ requires tamanho == posicoes.size();
+	//@ requires 2 <= tamanho && tamanho <= 5;
+	//@ requires direcao == 0 || direcao == 1;
+	//@ ensures \result != null;
+	//@ pure
+	private /* @ helper @ */ Navio criarNavio(int tamanho, ArrayList<String> posicoes, int direcao) {
+
+		if (tamanho == Corveta.TAMANHO) {
+			return new Corveta(posicoes, direcao);
+
+		} else if (tamanho == Submarino.TAMANHO) {
+			return new Submarino(posicoes, direcao);
+
+		} else if (tamanho == Fragata.TAMANHO) {
+			return new Fragata(posicoes, direcao);
+
+		} else if (tamanho == Destroyer.TAMANHO) {
+			return new Destroyer(posicoes, direcao);
+
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	//@ public normal_behavior
+	//@ requires 0 <= posX && posX < 10;
+	//@ requires 0 <= posY && posY < 10;
+	//@ requires 2 <= tamanho && tamanho <= 5;
+	//@ requires direcao == 0 || direcao == 1;
+	//@ assignable \nothing;
+	//@ ensures \result == true || \result == false;
+	public /* @ pure helper @ */ boolean verificarEspacoDisponivel(int posX, int posY, int tamanho, int direcao) {
 		if (direcao == 0) {
-			if (posY + tamanho > 10) {
+			if (posY + tamanho > 10)
 				return false;
-			}
+
+			
+			//@ loop_invariant 0 <= i && i <= tamanho;			
+			//@ decreases tamanho - i;			
 			for (int i = 0; i < tamanho; i++) {
-				if (barcos[posX][posY + i] == 1) {
+				if (barcos[posX][posY + i] == 1)
 					return false;
-				}
 			}
 		} else {
-			if (posX + tamanho > 10) {
+			if (posX + tamanho > 10)
 				return false;
-			}
+
+			//@ loop_invariant 0 <= i && i <= tamanho;
+			//@ decreases tamanho - i;
 			for (int i = 0; i < tamanho; i++) {
-				if (barcos[posX + i][posY] == 1) {
+				if (barcos[posX + i][posY] == 1)
 					return false;
-				}
 			}
 		}
 		return true;
 	}
 
-	/**
-	 * Gera uma direcao aleatoria para posicionar um navio (horizontal ou vertical).
-	 * 
-	 * @return 0 para horizontal, 1 para vertical.
-	 */
-	public int gerarDirecao() {
+	//@ public normal_behavior
+	//@ assignable \nothing;
+	//@ ensures \result == 0 || \result == 1;
+	public /*@ pure helper @*/ int gerarDirecao() {
 		Random random = new Random();
 		return random.nextInt(2);
 	}
 
-	/**
-	 * Metodo abstrato que deve ser implementado pelas subclasses para realizar um
-	 * disparo no tabuleiro.
-	 * 
-	 * @param coorX A coordenada X do tiro.
-	 * @param coorY A coordenada Y do tiro.
-	 */
-	public abstract void atirar(int coorX, int coorY);
-
+	
+	//@ public behavior
+	//@ requires (coorX < 0) || (0 <= coorX && coorX < 10);
+	//@ requires (coorY < 0) || (0 <= coorY && coorY < 10);
+	//@ assignable \everything;
+	public abstract int[] atirar(int coorX, int coorY);
 }
