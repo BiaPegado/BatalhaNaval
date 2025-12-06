@@ -70,6 +70,7 @@ public abstract class Malha {
 
 	//@ public normal_behavior
 	//@ ensures \result == vez;
+	//@ assignable \nothing;
 	public /* @ pure helper @ */ boolean isVez() {
 		return vez;
 	}
@@ -85,6 +86,7 @@ public abstract class Malha {
 
 	//@ public normal_behavior
 	//@ ensures \result == barcos;	
+	//@ assignable \nothing;
 	public /* @ pure helper @ */ int[][] getBarcos() {
 		return barcos;
 	}
@@ -102,6 +104,7 @@ public abstract class Malha {
 
 	//@ public normal_behavior
 	//@ ensures \result == naviosRestantes;
+	//@ assignable \nothing;
 	public /* @ pure helper @ */ int[] getNaviosRestantes() {
 		return naviosRestantes;
 	}
@@ -127,6 +130,7 @@ public abstract class Malha {
 
 	//@ public normal_behavior
 	//@ ensures \result == navios;
+	//@ assignable \nothing;
 	public /* @ pure helper @ */ ArrayList<Navio> getNavios() {
 		return navios;
 	}
@@ -193,7 +197,6 @@ public abstract class Malha {
   protected /*@ pure helper @*/ int gerarCoordenada() {
       Random random = new Random();
       int valor = random.nextInt(10);
-      //@ assume 0 <= valor && valor < 10;
       return valor;
   }
 	
