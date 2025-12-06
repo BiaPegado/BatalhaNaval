@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class Submarino extends Navio {
 
+	public static final int TAMANHO = 3;
     //@ public invariant mTamanho == 3;
 
 	/**
@@ -25,13 +26,14 @@ public class Submarino extends Navio {
 	 */
     /*@ 
       @ requires posicao != null;
-      @ requires posicao.size() == 3; 
+      @ requires posicao.size() == 3;
       @ requires direcao == 0 || direcao == 1;
       @ ensures mTamanho == 3;
       @ ensures this.posicao == posicao;
       @ ensures this.direcao == direcao;
+      @ pure
       @*/
 	public Submarino(ArrayList<String> posicao, int direcao) {
-		super(3, posicao, direcao);
+		super(TAMANHO, posicao, direcao);
 	}
 }
