@@ -4,45 +4,73 @@ import java.util.Random;
 import java.util.ArrayList;
 import br.ufrn.imd.model.Navio;
 
+/**
+ * Malha do jogador (é alvo do PC). atirar(...) se coorX<0 -> PC escolhe aleatório.
+ */
 public class MalhaJogador extends Malha {
 
-	public MalhaJogador() {
-		this.navios = new ArrayList<Navio>();
-		this.barcos = new int[10][10];
-	}
+    /*@ public normal_behavior
+      @ assignable barcos, navios;
+      @ ensures barcos != null && barcos.length == 10;
+      @ ensures (\forall int i; 0 <= i && i < 10; barcos[i] != null && barcos[i].length == 10);
+      @ ensures navios != null && navios.isEmpty();
+      @ ensures naviosRestantes != null && naviosRestantes.length == 4; // Inicializado pelo super()
+      @*/
+    public MalhaJogador() {
+        super(); 
+        this.navios = new ArrayList<Navio>();
+        this.barcos = new int[10][10];
+    }
 
-	/**
-	 * Realiza um disparo no tabuleiro de jogo. Representa o tiro do computador na
-	 * malha do jogador. Dispara em coordenadas aleatorias.
-	 * 
-	 * @param coorX A coordenada X do tiro.
-	 * @param coorY A coordenada Y do tiro.
-	 */
-	@Override
-	public void atirar(int coorX, int coorY) {
+    /**
+     * Realiza um disparo na malha do jogador.
+     * Se coorX < 0, escolhe coordenadas aleatórias (jogada do PC).
+     *
+     * retorna int[] {codigo, x, y}
+     */
+    //@ also
+    //@ public behavior
+    //@ assignable \everything;
+    //@ ensures \result != null;
+    //@ ensures \result.length == 3;
+    //@ ensures 0 <= \result[1] && \result[1] < 10;
+    //@ ensures 0 <= \result[2] && \result[2] < 10;
+    //@ ensures \result[0] == 0 || \result[0] == 1;
+    @Override
+    public int[] atirar(int coorX, int coorY) {
+        int x = 0; 
+        int y = 0;
 
-		Random random = new Random();
-		coorX = -1;
-		while ((coorX == -1) || ((this.barcos[coorX][coorY] == 2) || (this.barcos[coorX][coorY] == 3))) {
-			coorX = random.nextInt(10);
-			coorY = random.nextInt(10);
-		}
+        //@ loop_invariant 0 <= x && x < 10;
+        //@ loop_invariant 0 <= y && y < 10;
+        //@ loop_writes x, y;
+        while (true) {
+            x = gerarCoordenada();
+            y = gerarCoordenada();
 
-		if (barcos[coorX][coorY] == 0) {
-			barcos[coorX][coorY] = 3; // Errou barco
-			System.out.println("Adversario atingiu a agua em " + coorX + ", " + coorY);
-			System.out.println("");
-			control.modificarTabuleiro(coorX, coorY, "file:src/br/ufrn/imd/image/ondinhaExplodida.png", 0);
-		} else if (barcos[coorX][coorY] == 1) {
-			barcos[coorX][coorY] = 2;
-			System.out.println("Adversario atingiu navio em " + coorX + ", " + coorY);
-			System.out.println("");
-			control.modificarTabuleiro(coorX, coorY, "file:src/br/ufrn/imd/image/barcoExplodido.png", 0);
-		} else { // Se ja foi atingido anteriormente
-			System.out.println("Adversario ja atirou em " + coorX + ", " + coorY);
-			System.out.println("");
-		}
+            //@ assume 0 <= x && x < 10;
+            //@ assume 0 <= y && y < 10;
+            int val = barcos[x][y];
 
-	}
+            if (val == 2 || val == 3) {
+                continue; 
+            }
 
+            if (val == 0) {
+                barcos[x][y] = 3;
+                if (listener != null)
+                    listener.atualizarCelula(x, y,
+                        "file:src/br/ufrn/imd/image/ondinhaExplodida.png",
+                        0);
+                return new int[]{0, x, y};
+            } else if (val == 1) {
+                barcos[x][y] = 2;
+                if (listener != null)
+                    listener.atualizarCelula(x, y,
+                        "file:src/br/ufrn/imd/image/barcoExplodido.png",
+                        0);
+                return new int[]{1, x, y};
+            }
+        }
+    }
 }
