@@ -13,15 +13,25 @@ import java.util.ArrayList;
  */
 public class Fragata extends Navio {
 
+    //@ public invariant mTamanho == 4;
+
 	/**
 	 * Construtor da Fragata. Recebe uma lista de posições iniciais e uma
 	 * direção (horizontal ou vertical) para o posicionamento inicial do navio.
 	 *
 	 * @param posicao Lista de posições iniciais onde a Fragata será posicionada
-	 *                no tabuleiro.
+	 * no tabuleiro.
 	 * @param direcao Direção inicial do navio (0 para horizontal, 1 para
-	 *                vertical).
+	 * vertical).
 	 */
+    /*@ 
+      @ requires posicao != null;
+      @ requires posicao.size() == 4; 
+      @ requires direcao == 0 || direcao == 1;
+      @ ensures mTamanho == 4;
+      @ ensures this.posicao == posicao;
+      @ ensures this.direcao == direcao;
+      @*/
 	public Fragata(ArrayList<String> posicao, int direcao) {
 		super(4, posicao, direcao);
 	}
