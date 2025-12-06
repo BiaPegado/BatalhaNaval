@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class Fragata extends Navio {
 
+	public static final int TAMANHO = 4;
     //@ public invariant mTamanho == 4;
 
 	/**
@@ -26,13 +27,14 @@ public class Fragata extends Navio {
 	 */
     /*@ 
       @ requires posicao != null;
-      @ requires posicao.size() == 4; 
+      @ requires posicao.size() == 4;
       @ requires direcao == 0 || direcao == 1;
       @ ensures mTamanho == 4;
       @ ensures this.posicao == posicao;
       @ ensures this.direcao == direcao;
+      @ pure
       @*/
 	public Fragata(ArrayList<String> posicao, int direcao) {
-		super(4, posicao, direcao);
+		super(TAMANHO, posicao, direcao);
 	}
 }
