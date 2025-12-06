@@ -13,14 +13,24 @@ import java.util.ArrayList;
  */
 public class Submarino extends Navio {
 
+    //@ public invariant mTamanho == 3;
+
 	/**
 	 * Construtor do Submarino. * Recebe uma lista de posicoes iniciais e uma
 	 * direcao (horizontal ou vertical) para o posicionamento inicial do navio.
 	 *
 	 * @param posicao Lista de posicoes iniciais onde o Submarino sera posicionado
-	 *                no tabuleiro.
+	 * no tabuleiro.
 	 * @param direcao Direcao inicial do navio (0 para horizontal, 1 para vertical).
 	 */
+    /*@ 
+      @ requires posicao != null;
+      @ requires posicao.size() == 3; 
+      @ requires direcao == 0 || direcao == 1;
+      @ ensures mTamanho == 3;
+      @ ensures this.posicao == posicao;
+      @ ensures this.direcao == direcao;
+      @*/
 	public Submarino(ArrayList<String> posicao, int direcao) {
 		super(3, posicao, direcao);
 	}
