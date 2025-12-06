@@ -20,6 +20,7 @@ public class Navio {
     //@ public invariant posicao != null;
 
     /*@ 
+      @ public normal_behavior
       @ requires pos != null;
       @ requires tam > 0;
       @ requires pos.size() == tam;
@@ -28,6 +29,7 @@ public class Navio {
       @ ensures posicao == pos;
       @ ensures direcao == dir;
       @ ensures mDestruido == false;
+      @ pure
       @*/
     public Navio(int tam, ArrayList<String> pos, int dir) {
         this.destruido = false;
@@ -37,7 +39,7 @@ public class Navio {
     }
 
     //@ ensures \result == direcao;
-    public int getDirecao() {
+    public /*@ pure @*/ int getDirecao() {
         return direcao;
     }
 
@@ -60,7 +62,7 @@ public class Navio {
     }
 
     //@ ensures \result == destruido;
-    public boolean isDestruido() {
+    public /*@ pure @*/ boolean isDestruido() {
         return destruido;
     }
 
@@ -70,12 +72,12 @@ public class Navio {
     }
 
     //@ ensures \result == mTamanho;
-    public int getTamanho() {
+    public /*@ pure @*/ int getTamanho() {
         return tamanho;
     }
 
     //@ ensures \result == posicao;
-    public ArrayList<String> getPosicao() {
+    public /*@ pure @*/ ArrayList<String> getPosicao() {
         return posicao;
     }
 
