@@ -2,98 +2,106 @@ package br.ufrn.imd.model;
 
 import java.util.ArrayList;
 
-/**
- * Classe abstrata que representa um navio generico em um jogo de batalha naval.
- * Define propriedades comuns a todos os tipos de navios, como tamanho, posicao,
- * direcao e estado de destruicao. Subclasses especificas de navios (como
- * Corveta, Destroyer, Fragata) devem estender esta classe.
- */
 public class Navio {
-	protected boolean destruido;
-	protected int tamanho;
-	protected ArrayList<String> posicao;
-	protected int direcao;
 
-	/**
-	 * Constroi um novo navio com o tamanho especificado, nas posicoes e direcao
-	 * indicadas.
-	 *
-	 * @param tamanho Numero de celulas ocupadas pelo navio.
-	 * @param posicao Lista de posicoes onde o navio sera colocado no tabuleiro.
-	 * @param direcao Direcao inicial do navio (0 para horizontal, 1 para vertical).
-	 */
-	public Navio(int tamanho, ArrayList<String> posicao, int direcao) {
-		this.destruido = false;
-		this.tamanho = tamanho;
-		this.posicao = posicao;
-		this.direcao = direcao;
-	}
+    //@ public model instance int mTamanho;
+    //@ public model instance boolean mDestruido;
 
-	/**
-	 * Retorna a direcao atual do navio.
-	 *
-	 * @return Direcao do navio (0 para horizontal, 1 para vertical).
-	 */
-	public int getDirecao() {
-		return direcao;
-	}
+    /*@ spec_public @*/ protected int tamanho;   //@ in mTamanho;
+    /*@ spec_public @*/ protected boolean destruido; //@ in mDestruido;
+    /*@ spec_public @*/ protected ArrayList<String> posicao;
+    /*@ spec_public @*/ protected int direcao;
 
-	/**
-	 * Define a direcao do navio.
-	 *
-	 * @param direcao Nova direcao do navio (0 para horizontal, 1 para vertical).
-	 */
-	public void setDirecao(int direcao) {
-		this.direcao = direcao;
-	}
+    //@ public represents mTamanho = tamanho;
+    //@ public represents mDestruido = destruido;
 
-	public void setTamanho(int tamanho) {
-		this.tamanho = tamanho;
-	}
+    //@ public invariant mTamanho > 0;
+    //@ public invariant direcao == 0 || direcao == 1;
+    //@ public invariant posicao != null;
 
-	public void setPosicao(ArrayList<String> posicao) {
-		this.posicao = posicao;
-	}
+    /*@ 
+      @ requires pos != null;
+      @ requires tam > 0;
+      @ requires pos.size() == tam;
+      @ requires dir == 0 || dir == 1;
+      @ ensures mTamanho == tam;
+      @ ensures posicao == pos;
+      @ ensures direcao == dir;
+      @ ensures mDestruido == false;
+      @*/
+    public Navio(int tam, ArrayList<String> pos, int dir) {
+        this.destruido = false;
+        this.tamanho = tam;
+        this.posicao = pos;
+        this.direcao = dir;
+    }
 
-	// Getter para 'destruido'
-	public boolean isDestruido() {
-		return destruido;
-	}
+    //@ ensures \result == direcao;
+    public int getDirecao() {
+        return direcao;
+    }
 
-	// Setter para 'destruido'
-	public void setDestruido(boolean destruido) {
-		this.destruido = destruido;
-	}
+    //@ requires d == 0 || d == 1;
+    //@ ensures this.direcao == d;
+    public void setDirecao(int d) {
+        this.direcao = d;
+    }
 
-	// Getter para 'tamanho'
-	public int getTamanho() {
-		return tamanho;
-	}
+    //@ requires t > 0;
+    //@ ensures this.tamanho == t;
+    public void setTamanho(int t) {
+        this.tamanho = t;
+    }
 
-	// Getter para 'posicao'
-	public ArrayList<String> getPosicao() {
-		return posicao;
-	}
+    //@ requires p != null;
+    //@ ensures this.posicao == p;
+    public void setPosicao(ArrayList<String> p) {
+        this.posicao = p;
+    }
 
-	/**
-	 * Verifica se o navio foi destruido.
-	 *
-	 * @param sitNavio Estado atual do navio (array de inteiros indicando se cada
-	 *                 parte do navio foi atingida).
-	 */
-	public void verificarDestruido(int[] sitNavio) {
-		int partesRestantes = 0;
-		boolean destruido = true;
-		for (int s : sitNavio) {
-			if (s == 1) {
-				partesRestantes++;
-				destruido = false;
-				break;
-			}
-		}
-		if (destruido) {
-			setDestruido(true);
-		}
-	}
+    //@ ensures \result == destruido;
+    public boolean isDestruido() {
+        return destruido;
+    }
 
+    //@ ensures this.destruido == d;
+    public void setDestruido(boolean d) {
+        this.destruido = d;
+    }
+
+    //@ ensures \result == mTamanho;
+    public int getTamanho() {
+        return tamanho;
+    }
+
+    //@ ensures \result == posicao;
+    public ArrayList<String> getPosicao() {
+        return posicao;
+    }
+
+    /*@ 
+    @ requires sitNavio != null;
+    @ requires sitNavio.length == mTamanho;
+    @ assignable destruido; 
+    @ ensures (\forall int i; 0 <= i && i < sitNavio.length; sitNavio[i] == 0)
+    @          ==> mDestruido == true;
+    @*/
+  public void verificarDestruido(int[] sitNavio) {
+      boolean est = true;
+
+      //@ maintaining 0 <= i && i <= sitNavio.length;
+      //@ maintaining est == (\forall int k; 0 <= k && k < i; sitNavio[k] == 0);
+      //@ loop_writes i, est;
+      //@ decreases sitNavio.length - i;
+      for (int i = 0; i < sitNavio.length; i++) {
+          if (sitNavio[i] != 0) {
+              est = false;
+              break;
+          }
+      }
+
+      if (est) {
+          this.destruido = true;
+      }
+  }
 }
