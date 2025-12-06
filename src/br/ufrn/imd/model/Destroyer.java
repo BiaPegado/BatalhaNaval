@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class Destroyer extends Navio {
 
+	public static final int TAMANHO = 5;
     //@ public invariant mTamanho == 5;
 
 	/**
@@ -25,13 +26,14 @@ public class Destroyer extends Navio {
 	 */
     /*@ 
       @ requires posicao != null;
-      @ requires posicao.size() == 5; 
+      @ requires posicao.size() == 5;
       @ requires direcao == 0 || direcao == 1;
       @ ensures mTamanho == 5;
       @ ensures this.posicao == posicao;
       @ ensures this.direcao == direcao;
+      @ pure
       @*/
 	public Destroyer(ArrayList<String> posicao, int direcao) {
-		super(5, posicao, direcao);
+		super(TAMANHO, posicao, direcao);
 	}
 }
